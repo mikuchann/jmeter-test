@@ -1,0 +1,11 @@
+pipeline {
+   agent any
+
+   stages {
+      stage('Trigger Build') {
+         steps {
+            build 'devops/devops-demo1'
+         }
+      }
+   }
+}

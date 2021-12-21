@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: test-deployment
+  name: test-deployment
+  namespace: aaa-namespace
+spec:
+  selector:
+    matchLabels:
+      app: test-deployment
+  template:
+    metadata:
+      labels:
+        app: test-deployment
+    spec:
+      containers:
+        - args:
+            - '1000'
+          command:
+            - sleep
+          image: 'index.alauda.cn/alaudaorg/qaimages:helloworld'
+          name: ares-test
+          resources:
+            limits:
+              cpu: 10m
+              memory: 10Mi
+          ports:
+            - containerPort: 80

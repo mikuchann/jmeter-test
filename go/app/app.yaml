@@ -1,0 +1,81 @@
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  name: app
+  namespace: none
+spec:
+  assemblyPhase: Succeeded
+  componentKinds:
+    - group: apps
+      kind: Deployment
+    - group: ''
+      kind: Service
+  descriptor: {}
+  selector:
+    matchLabels:
+      app.alauda.io/name: app.ares
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.alauda.io/name: app.ares
+  name: app-go
+  namespace: lalala
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.alauda.io/name: app.ares
+      service.alauda.io/name: deployment-app-go
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: deployment-app-go
+        app.alauda.io/name: app.ares
+        service.alauda.io/name: deployment-app-go
+    spec:
+      containers:
+        - args:
+            - '1000'
+          command:
+            - sleep
+          env:
+            - name: a
+              value: s
+          image: 'index.alauda.cn/alaudaorg/qaimages:helloworld'
+          imagePullPolicy: Always
+          name: ares-test
+          resources:
+            limits:
+              cpu: 10m
+              memory: 10Mi
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+  labels:
+    app.alauda.io/name: app.ares
+  name: app-go
+  namespace: none
+spec:
+  ports:
+    - name: tcp-80-80
+      port: 80
+      protocol: TCP
+      targetPort: 80
+  selector:
+    service.alauda.io/name: deployment-app-go
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}
+
